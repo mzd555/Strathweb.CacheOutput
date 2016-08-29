@@ -88,7 +88,7 @@ namespace WebApi.OutputCache.V2
                 return false;
             }
 
-            return actionContext.Request.Method == HttpMethod.Get;
+            return actionContext.Request.Method == HttpMethod.Get || actionContext.Request.Method == HttpMethod.Post;
         }
 
         protected virtual void EnsureCacheTimeQuery()

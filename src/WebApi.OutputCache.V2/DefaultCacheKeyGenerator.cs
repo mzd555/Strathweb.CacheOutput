@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Web.Http.Controllers;
+using Newtonsoft.Json;
 
 namespace WebApi.OutputCache.V2
 {
@@ -17,7 +19,7 @@ namespace WebApi.OutputCache.V2
             var action = context.ActionDescriptor.ActionName;
             var key = context.Request.GetConfiguration().CacheOutputConfiguration().MakeBaseCachekey(controller, action);
             var actionParameters = context.ActionArguments.Where(x => x.Value != null).Select(x => x.Key + "=" + GetValue(x.Value));
-
+     
             string parameters;
 
             if (!excludeQueryString)
@@ -74,7 +76,14 @@ namespace WebApi.OutputCache.V2
                 var paramArray = val as IEnumerable;
                 return paramArray.Cast<object>().Aggregate(concatValue, (current, paramValue) => current + (paramValue + ";"));
             }
-            return val.ToString();
+            else if (val is string)
+            {
+                return val.ToString();
+            }
+            else
+            {
+                return JsonConvert.SerializeObject(val);
+            }
         }
     }
 }
